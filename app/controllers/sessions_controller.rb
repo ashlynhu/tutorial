@@ -8,6 +8,7 @@ class SessionsController < ApplicationController
   	# If user exists and is authenticated, continue the log in process
   	if user && user.authenticate(params[:session][:password])
       log_in(user)  # Call log_in helper method
+      remember user   # Will assign user a permanent cookie until logout
       redirect_to user
   	else
       # Display error message
@@ -17,7 +18,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    log_out
+    log_out if logged_in?
     redirect_to root_url
   end
 end
