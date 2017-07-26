@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
       # If remember box is checked --> remember the user
       # Otherwise --> forget the user
       params[:session][:remember_me] == '1' ? remember(user) : forget(user)
-      redirect_to user
+      redirect_back_or user
   	else
       # Display error message
   		flash.now[:danger] = "Invalid email/password combination"
