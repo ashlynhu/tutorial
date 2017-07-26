@@ -8,7 +8,9 @@ class SessionsController < ApplicationController
   	# If user exists and is authenticated, continue the log in process
   	if user && user.authenticate(params[:session][:password])
       log_in(user)  # Call log_in helper method
-      remember user   # Will assign user a permanent cookie until logout
+      # If remember box is checked --> remember the user
+      # Otherwise --> forget the user
+      params[:session][:remember_me] == '1' ? remember(user) : forget(user)
       redirect_to user
   	else
       # Display error message

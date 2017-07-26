@@ -39,4 +39,18 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
         assert_select "a[href=?]", logout_path,      count: 0
         assert_select "a[href=?]", user_path(@user), count: 0
     end
+
+    # Assert that user is remembered after logging in with checkbox checked
+    test "login with remembering" do 
+        log_in_as(@user, remember_me: '1')
+        assert_not_empty cookies['remember_token']
+    end
+
+    # Assert that user is not remembered if checkbox is not checked
+    test "login without remembering" do
+        log_in_as(@user, remember_me: '1')
+        log_in_as(@user, remember_me: '0')
+        assert_empty cookies['remember_token']
+    end
+
 end
