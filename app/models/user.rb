@@ -11,6 +11,17 @@ class User < ApplicationRecord
     has_secure_password		# method to allow for password functionality
     validates :password, presence: true, length: {minimum: 6}, allow_nil: true
 
+    # Activate an account
+    def activate
+        update_attribute(:activated, true)
+        update_attribute(:activated_at, Time.zone.now)
+    end
+
+    # Send Activation Email
+    def send_activation_email
+        UserMailer.account_activation(self).deliver_now
+    end
+
     class << self
         # Returns the hash digest of a given string
         def digest(string)
@@ -31,10 +42,11 @@ class User < ApplicationRecord
     	update_attribute(:remember_digest, User.digest(remember_token))
     end
 
-    # Returns true if the given token matches the digest
-    def authenticated?(remember_token)
-    	return false if remember_digest.nil?
-    	BCrypt::Password.new(remember_digest).is_password?(remember_token)
+    # Generalized authentication method
+    def authenticated?(attribute, token)
+        digest = send("#{attribute}_digest")   # Allows for remember digest and authentication
+    	return false if digest.nil?
+    	BCrypt::Password.new(digest).is_password?(token)
     end
 
     # Forgets a users information upon logout
