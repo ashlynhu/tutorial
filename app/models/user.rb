@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+    # Associates the user model with microposts
+    has_many :microposts, dependent: :destroy
 	# Validate presence of name attribute and that it is appropriate length
     attr_accessor :remember_token, :activation_token, :reset_token
     before_save   :downcase_email
